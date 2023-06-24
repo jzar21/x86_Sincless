@@ -48,9 +48,9 @@ else (DOXYGEN_FOUND AND BUILD_DOC)
 endif (DOXYGEN_FOUND AND BUILD_DOC)
 
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wpedantic -std=c++17")
 set(CMAKE_CXX_FLAGS_RELEASE "-O2")
-set(CMAKE_CXX_FLAGS_DEBUG "-g -Wall -Wextra -Wpedantic -fsanitize=unreachable,address")
+set(CMAKE_CXX_FLAGS_DEBUG "-g -fsanitize=unreachable,address")
 
 file(GLOB SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp")
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}/include")
