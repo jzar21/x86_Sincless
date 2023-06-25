@@ -47,8 +47,8 @@ else (DOXYGEN_FOUND AND BUILD_DOC)
    message("To build the documentation you need to install Doxygen and activate the BUILD_DOC option")
 endif (DOXYGEN_FOUND AND BUILD_DOC)
 
-
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wpedantic -std=c++17")
+# -pthread for the examples
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wpedantic -pthread -std=c++17")
 set(CMAKE_CXX_FLAGS_RELEASE "-O2")
 set(CMAKE_CXX_FLAGS_DEBUG "-g -fsanitize=unreachable,address")
 

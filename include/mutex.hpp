@@ -26,7 +26,6 @@
 #define x86_Sincless_Mutex
 
 #define OPEN_VALUE 0
-#define CLOSE_VALUE 1
 
 /**
  * @brief Basic mutex.
@@ -56,13 +55,12 @@ public:
      */
     void unlock();
 
-private:
     /**
-     * @brief Make an atomic write of 1 to the mutex value.
+     * @brief Return the value of the mutex.
      *
-     * @return Previous mutex value.
+     * @return value of the mutex.
      */
-    int test_and_set();
+    unsigned char mutex_value() const;
 };
 
 #endif /* x86_Sincless_Mutex */

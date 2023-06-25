@@ -23,9 +23,30 @@
  */
 
 #include <iostream>
+#include <unistd.h>
+#include <thread>
 #include "mutex.hpp"
 
-int main() {
+#define NUM_THEADS 8
+
+using namespace std;
+
+void foo(Mutex &m) {
+    m.lock();
     std::cout << "Hello World" << std::endl;
+    sleep(1);
+    m.unlock();
+}
+
+int main() {
+    Mutex m;
+    thread threads[8];
+    for (int i = 0; i < NUM_THEADS; i++) {
+        threads[i] = thread(foo, std::ref(m));
+    }
+
+    for (int i = 0; i < NUM_THEADS; i++) {
+        threads[i].join();
+    }
     return 0;
 }

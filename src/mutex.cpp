@@ -22,7 +22,6 @@
  * SOFTWARE.
  */
 
-#include <iostream>
 #include "mutex.hpp"
 
 Mutex::Mutex() { this->value = OPEN_VALUE; }
@@ -31,14 +30,21 @@ Mutex::~Mutex() { this->value = OPEN_VALUE; }
 
 void Mutex::lock() {
     // Busy wait
-    while (this->test_and_set() == CLOSE_VALUE) {
-    };
+
+    // clang-format off
+    asm volatile(
+        "loop: \n\t"
+            "mov $1, %%cl \n\t"
+            "lock xchg %%cl, %0 \n\t"
+            "test %%cl, %%cl \n\t"
+            "jne loop\n\t"
+        : "=m"(this->value) /* output */
+        :                   /* input */
+        : "%cl"             /* clobbered */
+    );
+    // clang-format on
 }
 
 void Mutex::unlock() { this->value = OPEN_VALUE; }
 
-int Mutex::test_and_set() {
-    unsigned char prev_val = this->value;
-    // TODO assemby stuff
-    return prev_val;
-}
+unsigned char Mutex::mutex_value() const { return this->value; }
