@@ -63,3 +63,6 @@ set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})
 
 add_executable(example1 "${CMAKE_CURRENT_SOURCE_DIR}/examples/example1.cpp")
 target_link_libraries(example1 ${PROJECT_NAME})
+
+add_executable(example2 "${CMAKE_CURRENT_SOURCE_DIR}/examples/example2.cpp")
+target_link_libraries(example2 ${PROJECT_NAME})
