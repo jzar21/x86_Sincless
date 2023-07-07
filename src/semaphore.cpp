@@ -1,31 +1,46 @@
 #include "semaphore.hpp"
+#include <iostream>
 
 Semaphore::Semaphore(unsigned char value) { this->value = value; }
 
 Semaphore::~Semaphore() { this->value = 0; }
 
+/**
+ * @brief This is only used to allow to handle signals to wakeu up
+ * the threads waiting the Semaphore.
+ *
+ * @param sig Signal to handle.
+ */
+static void sleep_thread(int sig) {}
+
 void Semaphore::acquire_semaphore() {
+    struct sigaction sa;
+    sa.sa_handler = sleep_thread;
+    sigemptyset(&sa.sa_mask);
+    sigaction(SIGUSR1, &sa, NULL);
+
     this->mutex.lock();
     // wait
-    while (this->value == 0) {
+    if (this->value == 0) {
+        this->thr_wait.push(pthread_self());
+        this->mutex.unlock();
+        pause();
+        this->mutex.lock();
     }
     --this->value;
     this->mutex.unlock();
 }
 
 void Semaphore::release_semaphore() {
-    if (this->value) {
-        this->mutex.lock();
-        ++this->value;
-        this->mutex.unlock();
-    } else {
-        /*
-         * If the value is 0 it means that there is a thread waiting
-         * to acquire the Semaphore so it has the mutex, it we try to
-         * lock the mutex it will produce a deadlock.
-         */
-        ++this->value;
+    this->mutex.lock();
+    ++this->value;
+    int sig = SIGUSR1;
+
+    if (this->thr_wait.size()) {
+        pthread_kill(this->thr_wait.front(), sig);
+        this->thr_wait.pop();
     }
+    this->mutex.unlock();
 }
 
 unsigned char Semaphore::get_semaphore_value() { return this->value; }

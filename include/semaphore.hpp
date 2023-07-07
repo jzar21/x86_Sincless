@@ -26,6 +26,9 @@
 #define x86_Sincless_Semaphore
 
 #include "mutex.hpp"
+#include <signal.h>
+#include <pthread.h>
+#include <queue>
 
 /**
  * @brief A basic Semaphore that allows a define num of thread
@@ -37,6 +40,7 @@ class Semaphore {
 private:
     unsigned char value;
     Mutex mutex;
+    std::queue<pthread_t> thr_wait;
 public:
     /**
      * @brief Construct a new Semaphore object.
