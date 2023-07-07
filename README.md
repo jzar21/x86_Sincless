@@ -28,3 +28,7 @@ the option `BUILD_DOC` on the file `CMakeLists.txt`.
 
 # How to contribute
 Just open a Pull Request and it will be reviewed and may be added to the project :)
+
+# Bugs and problems
+Currently in this version there is a small bug that occurs in the semaphore. If several signals are sent at the same time, it may happen that one of them is not delivered, producing a deadlock.
+This is somewhat fixed by compiling in RELEASE mode.
