@@ -25,22 +25,24 @@
 #ifndef x86_Sincless_Semaphore
 #define x86_Sincless_Semaphore
 
-#include "mutex.hpp"
-#include <signal.h>
 #include <pthread.h>
 #include <queue>
 
 /**
- * @brief A basic Semaphore that allows a define num of thread
- * to enter a section.
+ * @brief A basic Semaphore.
+ *
+ * At the moment it uses pthreads to wake and sleep the threads,
+ * in the future I will try to implement it through system calls.
  *
  * This Semaphore **does not** guarantees any kind of order.
  */
 class Semaphore {
 private:
     unsigned char value;
-    Mutex mutex;
-    std::queue<pthread_t> thr_wait;
+
+    pthread_mutex_t mutex;
+
+    std::queue<pthread_cond_t *> thr_wait;
 public:
     /**
      * @brief Construct a new Semaphore object.

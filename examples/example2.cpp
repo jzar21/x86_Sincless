@@ -36,7 +36,7 @@ Semaphore s(4);
 void foo(int id) {
     s.acquire_semaphore();
     std::cout << "Hello World from thread" << id << std::endl;
-    sleep(1);
+    sleep(5);
     s.release_semaphore();
 }
 

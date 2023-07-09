@@ -1,46 +1,40 @@
 #include "semaphore.hpp"
 #include <iostream>
 
-Semaphore::Semaphore(unsigned char value) { this->value = value; }
+Semaphore::Semaphore(unsigned char value) {
+    this->value = value;
+    pthread_mutex_init(&this->mutex, nullptr);
+}
 
-Semaphore::~Semaphore() { this->value = 0; }
-
-/**
- * @brief This is only used to allow to handle signals to wakeu up
- * the threads waiting the Semaphore.
- *
- * @param sig Signal to handle.
- */
-static void sleep_thread(int sig) {}
+Semaphore::~Semaphore() {
+    this->value = 0;
+    pthread_mutex_destroy(&mutex);
+}
 
 void Semaphore::acquire_semaphore() {
-    struct sigaction sa;
-    sa.sa_handler = sleep_thread;
-    sigemptyset(&sa.sa_mask);
-    sigaction(SIGUSR1, &sa, NULL);
+    pthread_cond_t cond = PTHREAD_COND_INITIALIZER;
 
-    this->mutex.lock();
+    pthread_mutex_lock(&mutex);
     // wait
     if (this->value == 0) {
-        this->thr_wait.push(pthread_self());
-        this->mutex.unlock();
-        pause();
-        this->mutex.lock();
+        this->thr_wait.push(&cond);
+
+        pthread_cond_wait(&cond, &this->mutex);
     }
     --this->value;
-    this->mutex.unlock();
+    pthread_mutex_unlock(&mutex);
+    pthread_cond_destroy(&cond);
 }
 
 void Semaphore::release_semaphore() {
-    this->mutex.lock();
-    ++this->value;
-    int sig = SIGUSR1;
+    pthread_mutex_lock(&mutex);
 
+    ++this->value;
     if (this->thr_wait.size()) {
-        pthread_kill(this->thr_wait.front(), sig);
+        pthread_cond_signal(this->thr_wait.front());
         this->thr_wait.pop();
     }
-    this->mutex.unlock();
+    pthread_mutex_unlock(&mutex);
 }
 
 unsigned char Semaphore::get_semaphore_value() { return this->value; }
