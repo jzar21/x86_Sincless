@@ -1,0 +1,11 @@
+AccessModifierOffset: -4
+BasedOnStyle: Google
+BreakBeforeBinaryOperators: NonAssignment
+ColumnLimit: 80
+IndentWidth: 4
+TabWidth: 4
+UseTab: Never
+SortIncludes: Never
+EmptyLineAfterAccessModifier: Never
+EmptyLineBeforeAccessModifier: Leave
+IndentCaseLabels: false

@@ -1,5 +1,4 @@
 #include "semaphore.hpp"
-#include <iostream>
 
 Semaphore::Semaphore(unsigned char value) {
     this->value = value;
